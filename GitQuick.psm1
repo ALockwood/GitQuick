@@ -116,6 +116,25 @@ function GitLogPretty()
 }
 Set-Alias glp GitLogPretty;
 
+<#
+Quick shortcuts for jumping to various project roots
+#>
+function SourceShortcut($repo)
+{
+   switch($repo)
+   {
+    "go" {cd "C:\Dev\Go"; break;}
+    "c#" {cd "C:\Dev\C#"; break;}
+    "sql" {cd "C:\Dev\SQL"; break;}
+    "java" {cd "C:\Dev\Java"; break;}
+    "duino" {cd "C:\Dev\Arduino"; break;}
+    "js" {cd "C:\Dev\JS"; break;}
+
+    default {cd "C:\Dev\"; break;}
+   }
+}
+Set-Alias root SourceShortcut;
+
 
 
 
