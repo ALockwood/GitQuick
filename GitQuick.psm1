@@ -6,7 +6,6 @@ to have this auto-load.
 See https://msdn.microsoft.com/en-us/library/dd878340(v=vs.85).aspx for more info on PS modules.
 #>
 
-
 <#
 Shortcut for pruning local branches that have been removed upstream.
 Default does a dry run, sending "run" prunes.
@@ -26,6 +25,7 @@ function GitPrune($arg)
 }
 Set-Alias prune GitPrune;
 
+
 <#
 Shortcut to list all remote branches, local statuses, and where local branches push.
 #>
@@ -34,6 +34,7 @@ function GitBranchStatus()
     git remote show origin;
 }
 Set-Alias gbs GitBranchStatus;
+
 
 <#
 Shortcut for pulling a remote branch. Defaults to verbose mode.
@@ -50,6 +51,7 @@ function GitPull($arg)
     }
 }
 Set-Alias pull GitPull;
+
 
 <#
 A (very) destructive branch switching script.
@@ -70,6 +72,7 @@ function GitHardCheckout($branchName)
 }
 Set-Alias gitswitch GitHardCheckout;
 
+
 <#
 A function that will show all the local branch changes, add all those changes to the index, and then commit
 with whatever message is added.
@@ -89,8 +92,40 @@ function BulkCommit($msg)
 }
 Set-Alias giterdone BulkCommit;
 
+
 <#
-As simple as it gets. Really just an alias for "git push".
+Function for merging branches without auto commit
+#>
+function SafeMerge($sourceBranch)
+{
+    if ([string]::IsNullOrEmpty($sourceBranch))
+    {
+        Write-Host "You must provide a source branch name." -ForegroundColor Red;
+    }
+
+    git merge --no-commit $sourceBranch;
+}
+Set-Alias merge SafeMerge;
+
+
+<#
+Function for creating a new branch from the active branch via checkout.
+#>
+function GitNewBranch($newBranchName)
+{
+    if ([string]::IsNullOrEmpty($newBranchName))
+    {
+        Write-Host "New branch name must be supplied!" -ForegroundColor Red;
+        Exit;
+    }
+
+    git checkout -b $newBranchName;
+}
+Set-Alias nb GitNewBranch; 
+
+
+<#
+Shortcut for "git push".
 #>
 function GitPush()
 {
@@ -98,8 +133,9 @@ function GitPush()
 }
 Set-Alias push GitPush;
 
+
 <#
-Simple function to return current branch status. Really just an alias for "git status".
+Shortcut for "git status".
 #>
 function GitStatus() 
 {
@@ -107,8 +143,40 @@ function GitStatus()
 }
 Set-Alias gs GitStatus;
 
+
 <#
-Function for viewing the git log in a "pretty" format.
+Shortcut for "git difftool"
+#>
+function GitDifftool($file) 
+{
+    git difftool $file;
+}
+Set-Alias gdt GitDifftool;
+
+
+<#
+Shortcut for cleaning merge artifacts post merge.
+#>
+function CleanMergeFiles() 
+{
+    git clean -f *.orig;
+}
+Set-Alias cmf CleanMergeFiles;
+
+
+<#
+Shortcut for pulling the latest branch code for $branch locally without switching the active branch.
+Eg. development branch is active, "gitrefresh master" will pull (fast-forward merge) the remote copy of master into the local one without switching branches. Handy for merges without requiring origin.
+Local and remote branch names MUST be equal.
+#>
+function GitRefresh($branch)
+{
+    git fetch origin $branch`:$branch;
+}
+
+
+<#
+Shortcut for viewing the git log in a "pretty" format.
 #>
 function GitLogPretty()
 {
@@ -116,24 +184,6 @@ function GitLogPretty()
 }
 Set-Alias glp GitLogPretty;
 
-<#
-Quick shortcuts for jumping to various project roots
-#>
-function SourceShortcut($repo)
-{
-   switch($repo)
-   {
-    "go" {cd "C:\Dev\Go"; break;}
-    "c#" {cd "C:\Dev\C#"; break;}
-    "sql" {cd "C:\Dev\SQL"; break;}
-    "java" {cd "C:\Dev\Java"; break;}
-    "duino" {cd "C:\Dev\Arduino"; break;}
-    "js" {cd "C:\Dev\JS"; break;}
-
-    default {cd "C:\Dev\"; break;}
-   }
-}
-Set-Alias root SourceShortcut;
 
 
 
